@@ -23,6 +23,14 @@
     <div class="d-flex justify-content-end mb-3">
       <a href="leads-form.php" class="btn btn-success">+ Tambah Lead Baru</a>
     </div>
+
+    <form method="GET" class="mb-3">
+      <div class="input-group">
+        <input type="text" name="search" class="form-control" placeholder="Cari nama produk..." value="<?php echo isset($_GET['search']) ? $_GET['search'] : '' ?>">
+        <button class="btn btn-primary" type="submit">Search</button>
+      </div>
+    </form>
+
     <div class="table-responsive">
       <table class="table table-bordered table-striped">
         <thead class="table-dark">
@@ -40,11 +48,16 @@
         <tbody>
           <?php
             $no = 1;
+
+            $search = isset($_GET['search']) ? $_GET['search'] : '';
+            $search = $conn->real_escape_string($search);
+
             $query = "
               SELECT l.id_leads, l.tanggal, s.nama_sales, p.nama_produk, l.nama_lead, l.no_wa, l.kota
               FROM leads l
               JOIN sales s ON l.id_sales = s.id_sales
               JOIN produk p ON l.id_produk = p.id_produk
+              WHERE p.nama_produk LIKE '%$search%'
               ORDER BY l.id_leads DESC
             ";
             $result = $conn->query($query);
@@ -63,7 +76,7 @@
                 $no++;
               }
             } else {
-              echo "<tr><td colspan='8' class='text-center'>Belum ada data</td></tr>";
+              echo "<tr><td colspan='8' class='text-center'>No Data</td></tr>";
             }
           ?>
         </tbody>
