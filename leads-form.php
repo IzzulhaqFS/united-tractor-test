@@ -19,6 +19,7 @@
   </head>
   <body>
     <div class="container mt-5">
+      <a href="index.php" class="btn btn-secondary mb-4">&larr; Kembali</a>
       <h3 class="mb-4">Form Leads</h3>
       <form action="simpan.php" method="POST">
         <div class="mb-3">
