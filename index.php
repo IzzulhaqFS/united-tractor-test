@@ -25,9 +25,43 @@
     </div>
 
     <form method="GET" class="mb-3">
-      <div class="input-group">
-        <input type="text" name="search" class="form-control" placeholder="Cari nama produk..." value="<?php echo isset($_GET['search']) ? $_GET['search'] : '' ?>">
-        <button class="btn btn-primary" type="submit">Search</button>
+      <div class="col-md-4">
+        <select class="form-select" id="produk" name="produk">
+          <option value="">-- Pilih Produk --</option>
+          <?php
+            $queryProduk = "SELECT * FROM produk";
+            $resultProduk = $conn->query($queryProduk);
+            while ($row = $resultProduk->fetch_assoc()) {
+              echo "<option value='{$row['id_produk']}'>{$row['nama_produk']}</option>";
+            }
+          ?>
+        </select>
+      </div>
+      <div class="col-md-4">
+        <select class="form-select" id="sales" name="sales">
+          <option value="">-- Pilih Sales --</option>
+          <?php
+            $querySales = "SELECT * FROM sales";
+            $resultSales = $conn->query($querySales);
+            while ($row = $resultSales->fetch_assoc()) {
+              echo "<option value='{$row['id_sales']}'>{$row['nama_sales']}</option>";
+            }
+          ?>
+        </select>
+      </div>
+      <div class="col-md-3">
+        <select name="bulan" class="form-select">
+          <option value="">Filter bulan ini</option>
+          <?php
+            for ($m = 1; $m <= 12; $m++) {
+              $selected = (isset($_GET['bulan']) && $_GET['bulan'] == $m) ? 'selected' : '';
+              echo "<option value='$m' $selected>" . date('F', mktime(0, 0, 0, $m, 1)) . "</option>";
+            }
+          ?>
+        </select>
+      </div>
+      <div class="col-md-1">
+        <button class="btn btn-primary w-100" type="submit">Cari</button>
       </div>
     </form>
 
@@ -48,18 +82,14 @@
         <tbody>
           <?php
             $no = 1;
-
-            $search = isset($_GET['search']) ? $_GET['search'] : '';
-            $search = $conn->real_escape_string($search);
-
             $query = "
               SELECT l.id_leads, l.tanggal, s.nama_sales, p.nama_produk, l.nama_lead, l.no_wa, l.kota
               FROM leads l
               JOIN sales s ON l.id_sales = s.id_sales
               JOIN produk p ON l.id_produk = p.id_produk
-              WHERE p.nama_produk LIKE '%$search%'
               ORDER BY l.id_leads DESC
             ";
+
             $result = $conn->query($query);
             if ($result->num_rows > 0) {
               while ($row = $result->fetch_assoc()) {
